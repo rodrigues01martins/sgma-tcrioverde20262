@@ -1,0 +1,119 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Perfil do usuário e informações de papel/permissões.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "canAccessEntry": { "type": "boolean" },
+        "canAccessReport": { "type": "boolean" },
+        "canAccessRelatorio": { "type": "boolean" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "BudgetItem": {
+      "title": "Budget Item",
+      "description": "Item orçamentário do Plano de Trabalho, cadastrado pelo administrador.",
+      "type": "object",
+      "properties": {
+        "stage": { "type": "string", "description": "Etapa do plano de trabalho" },
+        "group": { "type": "string", "description": "Grupo de despesa (ex: Custeio, Pessoal e Encargos)" },
+        "category": { "type": "string", "description": "Categoria/natureza da despesa" },
+        "desc": { "type": "string", "description": "Descrição do item" },
+        "value": { "type": "number", "description": "Valor previsto no item" }
+      },
+      "required": ["stage", "group", "category", "desc", "value"]
+    },
+    "LedgerEntry": {
+      "title": "Ledger Entry",
+      "description": "Registro financeiro de uma despesa vinculada a um item do Plano de Trabalho.",
+      "type": "object",
+      "properties": {
+        "itemCode": { "type": "string", "description": "Referência ao id de BudgetItem" },
+        "nf": { "type": "string" },
+        "supplier": { "type": "string" },
+        "category": { "type": "string" },
+        "documentName": { "type": "string" },
+        "documentData": { "type": "string", "description": "PDF codificado em Base64" },
+        "approvalStatus": { "type": "string", "enum": ["Em analise", "Pendente", "Aprovado", "Desaprovado"] },
+        "stage": { "type": "string" },
+        "group": { "type": "string" },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "referenceMonth": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "authorUid": { "type": "string" },
+        "auditComment": { "type": "string" }
+      },
+      "required": ["itemCode", "description", "amount", "date", "authorUid"]
+    },
+    "AuditLog": {
+      "title": "Audit Log",
+      "description": "Registro de auditoria de uma ação no sistema.",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "action": { "type": "string" },
+        "itemCode": { "type": "string" },
+        "nf": { "type": "string" },
+        "amount": { "type": "number" },
+        "detail": { "type": "string" },
+        "authorUid": { "type": "string" }
+      },
+      "required": ["timestamp", "action", "authorUid"]
+    },
+    "PartnershipSettings": {
+      "title": "Partnership Settings",
+      "description": "Dados fixos da parceria/instrumento jurídico usados no Relatório Final de Execução do Objeto.",
+      "type": "object",
+      "properties": {
+        "instrumento": { "type": "string" },
+        "processoSei": { "type": "string" },
+        "administracao": { "type": "string" },
+        "osc": { "type": "string" },
+        "objeto": { "type": "string" },
+        "valorGlobal": { "type": "string" },
+        "periodoIni": { "type": "string", "format": "date" },
+        "periodoFim": { "type": "string", "format": "date" },
+        "despesasPrevisto": {
+          "type": "object",
+          "properties": {
+            "material": { "type": "string" },
+            "servicos": { "type": "string" },
+            "diarias": { "type": "string" },
+            "vencimentos": { "type": "string" },
+            "encargos": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Perfis de usuários e suas permissões."
+    },
+    "/budgetItems/{itemId}": {
+      "schema": "BudgetItem",
+      "description": "Itens orçamentários do Plano de Trabalho auditado (gerenciados pelo admin)."
+    },
+    "/ledger": {
+      "schema": "LedgerEntry",
+      "description": "Registros financeiros (lançamentos de despesas)."
+    },
+    "/audit": {
+      "schema": "AuditLog",
+      "description": "Trilha de auditoria do sistema."
+    },
+    "/settings/partnership": {
+      "schema": "PartnershipSettings",
+      "description": "Dados fixos da parceria/instrumento usados no Relatório Final."
+    }
+  }
+}

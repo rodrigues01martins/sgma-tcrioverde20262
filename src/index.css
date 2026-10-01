@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Roboto Flex', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ============================================================
+   DESIGN TOKENS — Monitor de Aprendizes (dimensões Apuração Mensal
+   e Monitoramento e Avaliação, portadas do monitora-japrendiz).
+   Escopados a essas telas via var(--token); não afetam o restante
+   do app, que já usa cores fixas (#007770 etc.) diretamente.
+   ============================================================ */
+:root {
+  --brand-primary:    #007770;
+  --brand-secondary:  #37966F;
+  --brand-light:      #B9E4C9;
+  --brand-subtle:     #F0FAF5;
+  --brand-orange:     #FD5523;
+  --brand-warm:       #FFFBE6;
+
+  --bg-canvas:        #FFFBE6;
+  --bg-surface:       #FFFFFF;
+  --bg-subtle:        #F0FAF5;
+
+  --text-primary:     #1A1A1A;
+  --text-secondary:   #4B5563;
+  --text-muted:       #6B7280;
+  --text-on-brand:    #FFFFFF;
+
+  --border-default:   #E5E7EB;
+  --border-brand:     #B9E4C9;
+  --border-strong:    #D1D5DB;
+
+  --status-success-text:   #166534;
+  --status-success-bg:     #F0FDF4;
+  --status-success-border: #BBF7D0;
+
+  --status-warning-text:   #9A3412;
+  --status-warning-bg:     #FFF7ED;
+  --status-warning-border: #FED7AA;
+
+  --status-danger-text:    #DC2626;
+  --status-danger-bg:      #FEF2F2;
+  --status-danger-border:  #FECACA;
+
+  --status-info-text:      #7C3AED;
+  --status-info-bg:        #F5F3FF;
+  --status-info-border:    #DDD6FE;
+
+  --chart-1:    #356859;
+  --chart-2:    #FD5523;
+  --chart-3:    #7C3AED;
+  --chart-4:    #2563EB;
+  --chart-5:    #0F766E;
+  --chart-6:    #DC2626;
+  --chart-axis: #6B7280;
+  --chart-grid: #E5E7EB;
+
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-full: 999px;
+
+  --motion-fast:   150ms;
+  --motion-normal: 200ms;
+  --motion-slow:   300ms;
+
+  --font-family: 'Roboto Flex', ui-sans-serif, system-ui, sans-serif;
+
+  --bg:          var(--bg-canvas);
+  --surface:     var(--bg-surface);
+  --surface2:    var(--bg-subtle);
+  --border:      var(--border-brand);
+  --accent:      var(--brand-primary);
+  --accent2:     var(--brand-secondary);
+  --accent3:     var(--brand-light);
+  --warn:        var(--brand-orange);
+  --danger:      var(--status-danger-text);
+  --success:     var(--brand-secondary);
+  --text:        var(--text-primary);
+  --text-dim:    var(--text-secondary);
+}
+
+/* ============================================================
+   DESIGN TOKENS — lado "nativo" (Acompanhamento Financeiro,
+   Administração e shell do app: Header, modais, formulários).
+   Prefixo --native- para não colidir com os tokens acima (mesmo
+   papel semântico, valores hex diferentes dos dois subsistemas).
+   Consolidam os valores hex já predominantes no Tailwind dessas
+   telas — não introduzem cores novas.
+   ============================================================ */
+:root {
+  --native-primary:       #007770;
+  --native-primary-hover: #005F59;
+  --native-primary-light: #F0FAF5;
+  --native-focus:         var(--native-primary);
+
+  --native-canvas:  #F8FAFC;
+  --native-surface: #FFFFFF;
+
+  --native-text-heading: #1E293B;
+  --native-text-body:    #475569;
+  --native-text-muted:   #94A3B8;
+
+  --native-border:        #E2E8F0;
+  --native-border-subtle: #F1F5F9;
+
+  --native-success:      #059669;
+  --native-warning-bg:   #FCD951;
+  --native-warning-text: #7A5C00;
+  --native-danger:       #DC2626;
+  --native-info:         #2563EB;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media print {
+  header { display: none !important; }
+  .no-print { display: none !important; }
+
+  /* Painel Geral de Indicadores — relatório institucional (Manutenção B) */
+  .relatorio-geral thead { display: table-header-group; }
+  .relatorio-geral table { page-break-inside: auto; }
+  .relatorio-geral tr { page-break-inside: avoid; page-break-after: auto; }
+  .relatorio-geral .ficha-indicador { break-inside: avoid; page-break-inside: avoid; }
+  .relatorio-geral .quebra-pagina { break-before: page; page-break-before: always; }
+  .relatorio-geral { color: #000 !important; }
+  .relatorio-geral * { box-shadow: none !important; }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 15mm;
+}

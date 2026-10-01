@@ -1,0 +1,374 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isAdmin() {
+      return isAuthenticated() &&
+        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+         (request.auth.token.email == "juliano.mrodrigues@goias.gov.br"));
+    }
+    // Permissão individual concedida na aba "Gestão de Usuários" (ex: canAccessUpload).
+    function hasPermission(field) {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data[field] == true;
+    }
+    // Um documento de auto-cadastro (users/{uid} criado pelo próprio usuário)
+    // só pode nascer com privilégios zerados — nunca admin, nunca nenhuma
+    // permissão individual habilitada. É exatamente o que App.tsx grava ao
+    // criar o doc no primeiro login; qualquer valor diferente enviado
+    // diretamente à API é bloqueado aqui.
+    function semPermissoesElevadas(dados) {
+      return dados.role == 'user' &&
+        dados.canAccessRelatorio == false &&
+        dados.canAccessEntry == false &&
+        dados.canAccessReport == false &&
+        dados.canAccessUpload == false &&
+        dados.canAccessGerencial == false &&
+        dados.canAccessRepasse == false &&
+        dados.canAccessHistorico == false &&
+        dados.canAccessFrequencia == false &&
+        dados.canAccessAlcance == false &&
+        dados.canAccessEixo3 == false &&
+        dados.canAccessEixo4 == false &&
+        dados.canAccessFormulario30Dias == false &&
+        dados.canAccessPainel30Dias == false &&
+        dados.canAccessPesquisasSatisfacao == false &&
+        dados.canAccessPainelSatisfacao == false &&
+        dados.canAccessAvaliacaoPosPrograma == false &&
+        dados.canAccessPainelPosPrograma == false &&
+        dados.canAccessPainelGeralIndicadores == false;
+    }
+
+    // ── Pesquisas de Satisfação / Avaliação Pós-Programa — helpers ──
+    // Diferente das demais coleções de Monitoramento e Avaliação, a
+    // leitura das pesquisas NÃO é ampla para qualquer autenticado: um
+    // usuário só do Acompanhamento Financeiro (ex.: só canAccessEntry)
+    // não pode ganhar acesso às respostas apenas por ter login — exige
+    // alguma autorização real sobre esta própria família (importar OU
+    // visualizar algum dos dois painéis).
+    function podeAcessarPesquisas() {
+      return isAdmin() ||
+        hasPermission('canAccessPesquisasSatisfacao') ||
+        hasPermission('canAccessAvaliacaoPosPrograma') ||
+        hasPermission('canAccessPainelSatisfacao') ||
+        hasPermission('canAccessPainelPosPrograma');
+    }
+
+    // Formato comum às 4 coleções de resposta — o mesmo código
+    // (normalizeRows.js + surveyFirestoreService.js) grava exatamente
+    // estes 13 campos para qualquer instrumento, sempre por sobrescrita
+    // integral do documento (nunca merge parcial); o único ponto que
+    // varia entre coleções é o valor fixo de `surveyType`.
+    function respostaDePesquisaValida(dados, tipoEsperado) {
+      return dados.keys().hasOnly([
+          'surveyType', 'schemaVersion', 'sourceResponseId', 'completedAt',
+          'startedAt', 'lastModifiedAt', 'municipalityCode', 'municipalityName',
+          'municipalityRaw', 'answers', 'source', 'importedAt', 'importId'
+        ]) &&
+        dados.surveyType == tipoEsperado &&
+        dados.sourceResponseId is string &&
+        dados.answers is map &&
+        dados.source == 'microsoft_forms_csv';
+    }
+
+    // Histórico de importação (seção 43) — o código real
+    // (surveyFirestoreService.js) cria este documento uma ÚNICA vez, já
+    // completo, ao final da importação — nunca em duas etapas. Por isso
+    // é tratado como imutável (ver `allow update, delete` na coleção).
+    function historicoDeImportacaoValido(dados) {
+      return dados.keys().hasOnly([
+          'surveyType', 'schemaVersion', 'arquivo', 'importadoEm',
+          'importadoPorUid', 'importadoPorEmail', 'totalLinhas', 'novos',
+          'atualizados', 'inalterados', 'invalidos', 'avisos'
+        ]) &&
+        dados.surveyType in ['ACTIVE_LEARNER', 'MENTOR', 'GUARDIAN', 'GRADUATE'] &&
+        dados.importadoPorUid == request.auth.uid;
+    }
+
+    // ── Usuários ─────────────────────────────────────────────
+    match /users/{userId} {
+      // A coleção guarda e-mail, nome, função e todas as permissões
+      // individuais — leitura ampla para qualquer autenticado vazaria
+      // isso para usuários de outros módulos (ex.: alguém só do
+      // Acompanhamento Financeiro). Auditoria confirmou que só existem
+      // dois consumidores reais: App.tsx lê SEMPRE o próprio uid (nunca
+      // lista a coleção), e UserManagement.tsx lista todos, mas só é
+      // renderizado quando isAdmin (App.tsx: `{isAdmin ? <UserManagement
+      // .../> : ...}`) — endurecido para os dois casos reais, nunca
+      // "qualquer autenticado".
+      allow read: if isAdmin() || isOwner(userId);
+      // Usuário só cria o próprio doc com privilégios zerados (role='user',
+      // nenhuma permissão habilitada); admin cria qualquer usuário com
+      // qualquer valor. Uma conta excluída (registrada em deletedUsers,
+      // ver abaixo) nunca recria o próprio cadastro, mesmo com um token
+      // antigo ainda não expirado — o bloqueio não depende de o token
+      // ter sido revogado a tempo.
+      allow create: if isAdmin() || (
+        isOwner(userId) &&
+        semPermissoesElevadas(request.resource.data) &&
+        !exists(/databases/$(database)/documents/deletedUsers/$(userId))
+      );
+      // Usuário só pode alterar o próprio nome de exibição — role e todas as
+      // permissões (canAccess*) são exclusivas do admin. Antes só `role` era
+      // protegido; um usuário comum conseguia se autoconceder qualquer
+      // canAccess* chamando a API diretamente.
+      allow update: if isAdmin() || (
+        isOwner(userId) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ── Registro mínimo de contas excluídas (MANUTENÇÃO A) ──────
+    // Guarda só o UID (na própria chave do documento) e a data da
+    // exclusão — nenhum dado pessoal. Existe unicamente para impedir que
+    // um token antigo, ainda não expirado, recrie users/{uid} depois que
+    // a conta foi excluída (ver regra de create acima). Nunca é escrito
+    // pelo client: a exclusão real roda via Admin SDK em
+    // api/admin/delete-user.ts, que ignora estas regras — a única
+    // finalidade delas aqui é impedir leitura/escrita por usuários comuns.
+    match /deletedUsers/{uid} {
+      allow read, write: if isAdmin();
+    }
+
+    // ── Itens do Plano de Trabalho (orçamento) ──────────────────
+    match /budgetItems/{itemId} {
+      // Dados do orçamento pertencem ao Acompanhamento Financeiro — mesma
+      // fronteira de confiança do ledger (ver abaixo).
+      allow read: if isAdmin() || hasPermission('canAccessEntry') || hasPermission('canAccessReport');
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ── Configurações da parceria (dados fixos do relatório final) ─
+    match /settings/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ── Ledger (Acompanhamento Financeiro) ──────────────────────
+    match /ledger/{entryId} {
+      // Leitura restrita a quem tem acesso ao módulo financeiro — dado
+      // sensível, não é aberto a qualquer autenticado (diferente das
+      // coleções de Monitoramento, cujo modelo de leitura ampla é
+      // preservado intencionalmente).
+      allow read: if isAdmin() || hasPermission('canAccessEntry') || hasPermission('canAccessReport');
+
+      // Só quem tem "Novo Lançamento" (ou admin) cria, e a autoria gravada
+      // tem que ser o próprio usuário autenticado — impede que alguém crie
+      // um lançamento atribuído a outro uid.
+      allow create: if (isAdmin() || hasPermission('canAccessEntry')) &&
+        request.resource.data.authorUid == request.auth.uid;
+
+      // O dono só altera os campos operacionais do próprio lançamento.
+      // approvalStatus, authorUid e createdAt ficam fora da whitelist:
+      // sem isso, o próprio dono conseguiria aprovar/reprovar sua própria
+      // despesa ou forjar quem criou o registro, mesmo o client só chamando
+      // handleStatusChange/handleUpdateAuditComment quando isAdmin.
+      allow update: if isAdmin() || (
+        isOwner(resource.data.authorUid) &&
+        hasPermission('canAccessReport') &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'itemCode', 'nf', 'supplier', 'category', 'group', 'stage',
+          'documentName', 'documentData', 'description', 'amount', 'date',
+          'referenceMonth', 'auditComment', 'updatedAt'
+        ])
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    // ── Monitor de Aprendizes — dimensão "Apuração Mensal" ──────
+    // Metadados de cada período importado via CSV.
+    match /periodos/{periodoId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin() || hasPermission('canAccessUpload');
+      // Excluir um período é ação do Histórico, não do Upload — as duas
+      // são permissões distintas no client (canAccessHistorico x
+      // canAccessUpload); a regra antiga só aceitava canAccessUpload,
+      // quebrando quem tivesse só canAccessHistorico.
+      allow delete: if isAdmin() || hasPermission('canAccessUpload') || hasPermission('canAccessHistorico');
+    }
+
+    // Uma coleção por período, ex: colaboradores_2026_04. O Firestore não
+    // permite misturar prefixo fixo com variável num único segmento do
+    // caminho, então usamos um curinga genérico de coleção e filtramos
+    // pelo prefixo do nome dentro da condição.
+    match /{collectionId}/{colaboradorId} {
+      allow read: if collectionId.matches('colaboradores_.*') && isAuthenticated();
+      allow create, update: if collectionId.matches('colaboradores_.*') &&
+        (isAdmin() || hasPermission('canAccessUpload'));
+      allow delete: if collectionId.matches('colaboradores_.*') &&
+        (isAdmin() || hasPermission('canAccessUpload') || hasPermission('canAccessHistorico'));
+    }
+
+    // ── Monitor de Aprendizes — dimensão "Monitoramento e Avaliação" ───
+    // Visitas de fiscalização in loco (Formulário + Painel Visita In Loco).
+    // O autosave do Formulário de Visita In Loco atualiza o próprio
+    // rascunho repetidas vezes antes do envio — por isso o autor pode
+    // dar update enquanto status ainda for 'rascunho' (nunca depois de
+    // 'enviada'), sem poder trocar de dono do documento.
+    match /visitas_inloco/{visitaId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin() || hasPermission('canAccessEixo3');
+      allow update: if isAdmin() || (
+        hasPermission('canAccessEixo3') &&
+        resource.data.status == 'rascunho' &&
+        resource.data.criadoPorUid == request.auth.uid &&
+        request.resource.data.criadoPorUid == resource.data.criadoPorUid
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Visita In Loco – Prática. Instrumento independente da Visita In Loco
+    // acima (agora Teórica) — coleção própria, mesmo modelo de permissão
+    // (quem já tem acesso à família Visita In Loco acessa as duas
+    // modalidades), para não misturar registros nem criar novo perfil.
+    match /visitas_inloco_pratica/{visitaId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin() || hasPermission('canAccessEixo3');
+      allow update: if isAdmin() || (
+        hasPermission('canAccessEixo3') &&
+        resource.data.status == 'rascunho' &&
+        resource.data.criadoPorUid == request.auth.uid &&
+        request.resource.data.criadoPorUid == resource.data.criadoPorUid
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Verificação Inicial do Aprendiz — 30 Dias. Uma coleção por período de
+    // aplicação (verificacao30dias_aaaa_mm), mesmo motivo do curinga usado
+    // acima para colaboradores_*. Mesmo raciocínio do autosave de
+    // visitas_inloco: o autor pode atualizar o próprio rascunho
+    // enquanto status == 'rascunho'.
+    match /{collectionId}/{respostaId} {
+      allow read: if collectionId.matches('verificacao30dias_[0-9]+_[0-9]+') && isAuthenticated();
+      allow create: if collectionId.matches('verificacao30dias_[0-9]+_[0-9]+') &&
+        (isAdmin() || hasPermission('canAccessFormulario30Dias'));
+      allow update: if collectionId.matches('verificacao30dias_[0-9]+_[0-9]+') && (
+        isAdmin() || (
+          hasPermission('canAccessFormulario30Dias') &&
+          resource.data.status == 'rascunho' &&
+          resource.data.metadata.createdBy == request.auth.uid &&
+          request.resource.data.metadata.createdBy == resource.data.metadata.createdBy
+        )
+      );
+      allow delete: if collectionId.matches('verificacao30dias_[0-9]+_[0-9]+') && isAdmin();
+    }
+
+    // Metadados de quais períodos têm formulários — um doc por período.
+    match /verificacao30dias_periodos/{periodoId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin() || hasPermission('canAccessFormulario30Dias');
+      allow delete: if isAdmin();
+    }
+
+    // ── Pesquisas de Satisfação (Aprendiz/Mentor/Responsável) e
+    // Avaliação Pós-Programa (Egresso) — Monitoramento e Avaliação ────
+    // Escrita reaproveita a MESMA permissão já usada no Formulário de
+    // importação correspondente (nenhuma RBAC nova); helpers acima.
+    match /pesquisas_aprendiz_respostas/{respostaId} {
+      allow read: if podeAcessarPesquisas();
+      // sourceResponseId == id do próprio documento é a proteção central
+      // de identidade: como o documento já nasce com esse id, qualquer
+      // tentativa de gravar um valor de campo diferente do path é
+      // bloqueada na origem — nunca "mentor:100" viraria "mentor:999".
+      allow create: if (isAdmin() || hasPermission('canAccessPesquisasSatisfacao')) &&
+        respostaDePesquisaValida(request.resource.data, 'ACTIVE_LEARNER') &&
+        request.resource.data.sourceResponseId == respostaId;
+      // Reimportação (seção 31): conteúdo pode ser corrigido, mas
+      // sourceResponseId e surveyType — a identidade lógica da resposta
+      // (seção 16) — têm que continuar iguais aos já persistidos.
+      allow update: if (isAdmin() || hasPermission('canAccessPesquisasSatisfacao')) &&
+        respostaDePesquisaValida(request.resource.data, 'ACTIVE_LEARNER') &&
+        request.resource.data.sourceResponseId == resource.data.sourceResponseId &&
+        request.resource.data.surveyType == resource.data.surveyType;
+      // O fluxo de importação nunca exclui (seção 13/30) — delete
+      // permanece só para admin, mesmo padrão de correção manual já
+      // usado em todas as demais coleções desta dimensão (visitas_inloco,
+      // colaboradores_*, verificacao30dias_*), mesmo sem botão de
+      // excluir na tela.
+      allow delete: if isAdmin();
+    }
+
+    match /pesquisas_mentor_respostas/{respostaId} {
+      allow read: if podeAcessarPesquisas();
+      allow create: if (isAdmin() || hasPermission('canAccessPesquisasSatisfacao')) &&
+        respostaDePesquisaValida(request.resource.data, 'MENTOR') &&
+        request.resource.data.sourceResponseId == respostaId;
+      allow update: if (isAdmin() || hasPermission('canAccessPesquisasSatisfacao')) &&
+        respostaDePesquisaValida(request.resource.data, 'MENTOR') &&
+        request.resource.data.sourceResponseId == resource.data.sourceResponseId &&
+        request.resource.data.surveyType == resource.data.surveyType;
+      allow delete: if isAdmin();
+    }
+
+    match /pesquisas_responsavel_respostas/{respostaId} {
+      allow read: if podeAcessarPesquisas();
+      allow create: if (isAdmin() || hasPermission('canAccessPesquisasSatisfacao')) &&
+        respostaDePesquisaValida(request.resource.data, 'GUARDIAN') &&
+        request.resource.data.sourceResponseId == respostaId;
+      allow update: if (isAdmin() || hasPermission('canAccessPesquisasSatisfacao')) &&
+        respostaDePesquisaValida(request.resource.data, 'GUARDIAN') &&
+        request.resource.data.sourceResponseId == resource.data.sourceResponseId &&
+        request.resource.data.surveyType == resource.data.surveyType;
+      allow delete: if isAdmin();
+    }
+
+    match /pesquisas_egresso_respostas/{respostaId} {
+      allow read: if podeAcessarPesquisas();
+      allow create: if (isAdmin() || hasPermission('canAccessAvaliacaoPosPrograma')) &&
+        respostaDePesquisaValida(request.resource.data, 'GRADUATE') &&
+        request.resource.data.sourceResponseId == respostaId;
+      allow update: if (isAdmin() || hasPermission('canAccessAvaliacaoPosPrograma')) &&
+        respostaDePesquisaValida(request.resource.data, 'GRADUATE') &&
+        request.resource.data.sourceResponseId == resource.data.sourceResponseId &&
+        request.resource.data.surveyType == resource.data.surveyType;
+      allow delete: if isAdmin();
+    }
+
+    // Histórico de importação das pesquisas (seção 43) — operacional,
+    // não é a auditoria global já descartada anteriormente no projeto.
+    // Tratado como IMUTÁVEL mesmo para admin (ver helper acima e nota da
+    // seção 29 desta manutenção): diferente das coleções de resposta,
+    // que são registros substantivos corrigíveis por admin como em todo
+    // o resto do módulo, aqui o valor do registro está justamente em
+    // nunca poder ser alterado depois de escrito.
+    match /pesquisas_importacoes/{importacaoId} {
+      allow read: if podeAcessarPesquisas();
+      // A permissão exigida acompanha o surveyType declarado no próprio
+      // registro — quem só importa Egresso não grava histórico de
+      // Mentor, por exemplo.
+      allow create: if historicoDeImportacaoValido(request.resource.data) && (
+        (request.resource.data.surveyType in ['ACTIVE_LEARNER', 'MENTOR', 'GUARDIAN'] &&
+          (isAdmin() || hasPermission('canAccessPesquisasSatisfacao'))) ||
+        (request.resource.data.surveyType == 'GRADUATE' &&
+          (isAdmin() || hasPermission('canAccessAvaliacaoPosPrograma')))
+      );
+      allow update, delete: if false;
+    }
+
+    // Rascunho do Relatório Final — documento único e compartilhado
+    // ('atual'), como settings/partnership, mas com permissão de escrita
+    // para quem tem acesso à aba (não só admin), pois o conteúdo do
+    // relatório em si é preenchido por quem tem canAccessRelatorio.
+    match /relatorioFinalRascunho/{docId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAdmin() || hasPermission('canAccessRelatorio');
+      allow delete: if isAdmin();
+    }
+
+    // ── Fallback — nega por padrão qualquer coleção não listada acima ──
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
