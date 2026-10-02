@@ -40,19 +40,10 @@ export const Login: React.FC<LoginProps> = ({ showToast }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white">
+    <div className="min-h-screen flex flex-col bg-white">
 
-      {/* ── Imagem à esquerda ── */}
-      <div className="hidden md:block md:w-1/2 relative">
-        <img
-          src="/jovens.png"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      </div>
-
-      {/* ── Formulário à direita ── */}
-      <div className="flex-1 md:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12">
+      {/* ── Formulário ── */}
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12">
         <div className="w-full max-w-sm mx-auto flex-1 flex flex-col justify-center">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
@@ -97,9 +88,8 @@ export const Login: React.FC<LoginProps> = ({ showToast }) => {
         </div>
 
         {/* ── Marcas ── */}
-        <div className="w-full max-w-sm mx-auto flex items-center justify-between gap-6 pt-10">
+        <div className="w-full max-w-sm mx-auto flex items-center justify-center pt-10">
           <img src="/logo-seds-goias.png" alt="SEDS · Governo de Goiás" className="h-9 w-auto object-contain" />
-          <img src="/logo-aprendiz-futuro.png" alt="Aprendiz do Futuro" className="h-9 w-auto object-contain" />
         </div>
       </div>
     </div>

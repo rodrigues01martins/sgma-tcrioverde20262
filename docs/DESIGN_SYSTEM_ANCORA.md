@@ -269,8 +269,8 @@ nunca nome inventado. Não aplicar em siglas administrativas (OSC, EAD, PDF).
 
 ## 10. Shell e identidade
 
-- **Header** (`Header.tsx`): `bg-white border-b border-slate-200 sticky top-0 z-30`, altura `h-24`, logos `/logo-seds-goias.png` e `/logo-aprendiz-futuro.png` (`h-10`), links `text-sm font-medium text-slate-700 hover:text-[#007770]`, botão "Sair" primário.
-- **Seleção de dimensão** (`DimensionSelect.tsx`): tela dividida — imagem `/jovens.png` à esquerda (desktop), opções à direita alinhadas à direita em `text-lg font-bold text-[#007770]` com círculo `w-11 h-11 border-2 border-[#007770]` + `ArrowRight`; hover preenche o círculo de verde; logos no rodapé.
+- **Header** (`Header.tsx`): `bg-white border-b border-slate-200 sticky top-0 z-30`, altura `h-24`, logo `/logo-seds-goias.png` (`h-10`), links `text-sm font-medium text-slate-700 hover:text-[#007770]`, botão "Sair" primário.
+- **Seleção de dimensão** (`DimensionSelect.tsx`): coluna única centralizada, opções alinhadas à direita em `text-lg font-bold text-[#007770]` com círculo `w-11 h-11 border-2 border-[#007770]` + `ArrowRight`; hover preenche o círculo de verde; logo no rodapé.
 
 ## 11. Impressão / PDF
 

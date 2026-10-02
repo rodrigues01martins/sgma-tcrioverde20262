@@ -17,7 +17,6 @@ export const Header: React.FC<HeaderProps> = ({ showExportButton, onGoHome, onEx
         {/* ── Marcas ── */}
         <div className="flex items-center gap-4 shrink-0">
           <img src="/logo-seds-goias.png" alt="SEDS · Governo de Goiás" className="h-10 w-auto object-contain" />
-          <img src="/logo-aprendiz-futuro.png" alt="Aprendiz do Futuro" className="h-10 w-auto object-contain" />
         </div>
 
         {/* ── Menu ── */}
