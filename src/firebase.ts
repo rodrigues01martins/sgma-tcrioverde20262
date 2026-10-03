@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const config = {
-  apiKey: 'AIzaSyAOZnxtCoDaeL8_W0z2lIRSQu4lXBPl5OE',
-  authDomain: 'ptrenapsi.firebaseapp.com',
-  projectId: 'ptrenapsi',
-  storageBucket: 'ptrenapsi.firebasestorage.app',
-  messagingSenderId: '1009359187333',
-  appId: '1:1009359187333:web:b4d1a4428e6a403bc428ec',
-  measurementId: 'G-KWV9LSEE3X',
+  apiKey: 'AIzaSyC9WVWHn1N8I4QIL8BB-HBapcQWA_lqbyw',
+  authDomain: 'sgma-tcrioverde20262.firebaseapp.com',
+  projectId: 'sgma-tcrioverde20262',
+  storageBucket: 'sgma-tcrioverde20262.firebasestorage.app',
+  messagingSenderId: '709593801447',
+  appId: '1:709593801447:web:044477dd318433c5c1b842',
+  measurementId: 'G-DXDCF3FGN3',
 };
 
 const app = initializeApp(config);
