@@ -244,7 +244,6 @@ Labels `text-[14px] uppercase tracking-wider font-bold text-[#007770]` com ícon
 | `AutosaveStatus.jsx` | Estados `dirty \| saving \| saved \| error`, sempre ícone + texto, `aria-live="polite"`. |
 | `Tooltip.jsx` | Portal no `body`, `position: fixed`, abre por hover/foco/clique, fecha com Esc, reposiciona em scroll/resize; balão `#0f172a`, 12px/600, `maxWidth 240`, `zIndex 9999`; gatilho com sublinhado pontilhado e `cursor: help`; `className="no-print"`. |
 | `IndicatorDrilldown.jsx` | Modal de detalhamento (`zIndex 60`, `maxWidth 760`, `--radius-lg`), `titulo` **string** (vai para `aria-label`), estados carregando/erro/vazio. Blocos exportados: `DrilldownComposicao`, `DrilldownFormula`, `DrilldownLista` ("Mostrar mais", 50 por vez), `DrilldownCriterios`. |
-| `IndicatorListModal.jsx` | Modal central com lista + botão "Exportar Excel". |
 | `MapaMunicipios.jsx` | Mapa Leaflet com tooltip customizado `.mapa-tooltip`. |
 | `VisitaInLocoShared.jsx` | Blocos compartilhados dos formulários de Visita In Loco. |
 

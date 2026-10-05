@@ -414,14 +414,8 @@ export function App() {
     return (
       <>
         <ApuracaoMensal
-          isAdmin={isAdmin}
-          canAccessUpload={canAccessUpload}
-          canAccessGerencial={canAccessGerencial}
-          canAccessRepasse={canAccessRepasse}
-          canAccessHistorico={canAccessHistorico}
           onGoHome={handleGoHome}
           onSignOut={handleSignOut}
-          showToast={showToast}
         />
         <Toast message={toast.message} isVisible={toast.isVisible} />
       </>
