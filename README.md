@@ -14,7 +14,7 @@ O app usa dois Design Systems lado a lado, por história de portabilidade: `src/
 
 ## Dimensões e funcionalidades
 
-Após o login, o usuário escolhe uma dimensão (`DimensionSelect`). Acompanhamento Financeiro, Monitoramento e Avaliação e Apuração Mensal aparecem para qualquer usuário autenticado — dentro de cada uma, só ficam disponíveis as abas cuja permissão específica foi liberada (administradores têm acesso automático a todas). Gestão do Aplicativo só aparece para administradores.
+Após o login, o usuário escolhe uma dimensão (`DimensionSelect`). Acompanhamento Financeiro e Monitoramento e Avaliação aparecem para qualquer usuário autenticado — dentro de cada uma, só ficam disponíveis as abas cuja permissão específica foi liberada (administradores têm acesso automático a todas). Gestão do Aplicativo só aparece para administradores.
 
 ### Acompanhamento Financeiro
 
@@ -26,7 +26,7 @@ Após o login, o usuário escolhe uma dimensão (`DimensionSelect`). Acompanhame
 
 ### Apuração Mensal
 
-A tela está vazia: o conteúdo anterior (abas Upload, Gerencial, Repasse e Histórico) foi removido, preservando a rota, o acesso pela seleção de dimensão e o cabeçalho global. Os dados já gravados no Firestore não foram apagados.
+A tela está vazia: o conteúdo anterior (abas Upload, Gerencial, Repasse e Histórico) foi removido, preservando a rota e o cabeçalho global. O atalho na seleção de dimensão também foi retirado. Os dados já gravados no Firestore não foram apagados.
 
 ### Monitoramento e Avaliação
 

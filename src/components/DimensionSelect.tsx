@@ -55,10 +55,6 @@ export const DimensionSelect: React.FC<DimensionSelectProps> = ({ isAdmin, onSel
             lines={['Monitoramento', 'e Avaliação']}
             onClick={() => onSelect('metas')}
           />
-          <DimensionOption
-            lines={['Apuração Mensal']}
-            onClick={() => onSelect('apuracao')}
-          />
           {isAdmin && (
             <DimensionOption
               lines={['Gestão do', 'Aplicativo']}
