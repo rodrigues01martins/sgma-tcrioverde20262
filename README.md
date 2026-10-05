@@ -31,7 +31,7 @@ A tela está vazia: o conteúdo anterior (abas Upload, Gerencial, Repasse e Hist
 ### Monitoramento e Avaliação
 
 - **Formulários**: Visita In Loco (Teórica e Prática), Verificação Inicial — 30 Dias, Relatório Final de Execução do Objeto (assistente em seções, com dados fixos da parceria configurados pelo administrador), Indicadores de Satisfação (Aprendiz Ativo, Mentor da Prática, Responsável Legal — importação via CSV do Microsoft Forms) e Avaliação Pós-Programa (Egresso)
-- **Painéis**: Eixo 1 — Inclusão, Eixo 2 — Alcance, Visita In Loco (Teórica e Prática), Verificação Inicial — 30 Dias, Indicadores de Satisfação, Avaliação Pós-Programa
+- **Painéis**: Visita In Loco (Teórica e Prática), Verificação Inicial — 30 Dias, Indicadores de Satisfação, Avaliação Pós-Programa
 - **Painel Geral de Indicadores**: relatório técnico institucional com os 44 indicadores da matriz metodológica definitiva do Programa (capa, quadro consolidado, fichas técnicas por indicador, notas metodológicas e impressão/PDF), reaproveitando os mesmos motores de cálculo dos painéis individuais — nunca uma fórmula paralela
 - Siglas de indicadores (PVP, TRV, IRI, IQPF etc.) têm tooltip com o nome completo em toda a interface
 

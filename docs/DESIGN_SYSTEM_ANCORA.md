@@ -237,14 +237,11 @@ Labels `text-[14px] uppercase tracking-wider font-bold text-[#007770]` com ícon
 | `Badge.jsx` | `variant`: `neutral \| brand \| success \| warning \| danger \| info` (usa trio de status); altura 24px, `padding 0 12px`, `--radius-full`, 12px/600. |
 | `Input.jsx` | Exporta `Input`, `MonthInput`, `Select`. Altura 40px, `--radius-sm`, label 12px/600. Foco: borda `--brand-primary` + `box-shadow: 0 0 0 3px rgba(53,104,89,0.12)`. Erro: borda `--status-danger-border`. `Select` com chevron SVG próprio. |
 | `KpiCard.jsx` | `label` (aceita JSX), `value`, `sub`, `color`: `blue \| green \| teal \| purple \| warn \| danger`, `icon`, `onDetails`, `detailsLabel='Ver detalhes →'`. Barra colorida de 4px no topo, `overflow: hidden`, `--radius-md`, padding 20px. Com `onDetails` vira acionável (clique + Enter/Espaço). |
-| `ChartCard.jsx` | `title` + badge opcional; cabeçalho em `--bg-subtle`; corpo com padding 16px. |
 | `Loader.jsx` | Spinner (borda `--brand-light`, topo `--brand-primary`) + `message`. |
 | `EmptyState.jsx` | Ícone SVG padrão, `title='Nenhum dado encontrado'`, `description`. |
-| `NotaMetodologica.jsx` | Nota **sempre visível** (não é tooltip): fundo `--brand-subtle`, borda `--border-brand`, ícone "i". |
 | `AutosaveStatus.jsx` | Estados `dirty \| saving \| saved \| error`, sempre ícone + texto, `aria-live="polite"`. |
 | `Tooltip.jsx` | Portal no `body`, `position: fixed`, abre por hover/foco/clique, fecha com Esc, reposiciona em scroll/resize; balão `#0f172a`, 12px/600, `maxWidth 240`, `zIndex 9999`; gatilho com sublinhado pontilhado e `cursor: help`; `className="no-print"`. |
 | `IndicatorDrilldown.jsx` | Modal de detalhamento (`zIndex 60`, `maxWidth 760`, `--radius-lg`), `titulo` **string** (vai para `aria-label`), estados carregando/erro/vazio. Blocos exportados: `DrilldownComposicao`, `DrilldownFormula`, `DrilldownLista` ("Mostrar mais", 50 por vez), `DrilldownCriterios`. |
-| `MapaMunicipios.jsx` | Mapa Leaflet com tooltip customizado `.mapa-tooltip`. |
 | `VisitaInLocoShared.jsx` | Blocos compartilhados dos formulários de Visita In Loco. |
 
 **Tooltip de sigla de indicador** (`src/features/indicators-general/IndicatorTooltip.jsx`):
@@ -253,8 +250,6 @@ Labels `text-[14px] uppercase tracking-wider font-bold text-[#007770]` com ícon
 ```
 Fonte única dos nomes: `INDICATOR_CATALOG` (44 indicadores). Sigla desconhecida → texto simples,
 nunca nome inventado. Não aplicar em siglas administrativas (OSC, EAD, PDF).
-
-**GaugeCard (padrão local em `Frequencia.jsx`)**: barra de 4px no topo, valor em %, barra de progresso de 6px; valor nulo exibe "Não aplicável".
 
 ## 9. Padrões de conteúdo e estado
 

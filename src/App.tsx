@@ -429,8 +429,6 @@ export function App() {
         <MonitoramentoAvaliacao
           isAdmin={isAdmin}
           canAccessRelatorio={canAccessRelatorio}
-          canAccessFrequencia={canAccessFrequencia}
-          canAccessAlcance={canAccessAlcance}
           canAccessEixo3={canAccessEixo3}
           canAccessEixo4={canAccessEixo4}
           canAccessFormulario30Dias={canAccessFormulario30Dias}
