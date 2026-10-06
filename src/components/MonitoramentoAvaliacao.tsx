@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { MonitoringNavigation, NavEntry } from './MonitoringNavigation';
 import RelatorioFinal from './RelatorioFinal';
-import Frequencia from '../pages/monitor/Frequencia';
-import Alcance from '../pages/monitor/Alcance';
 import VisitaInLocoForm from '../pages/monitor/VisitaInLocoForm';
 import VisitaInLocoDashboard from '../pages/monitor/VisitaInLocoDashboard';
 import VisitaInLocoPraticaForm from '../pages/monitor/VisitaInLocoPraticaForm';
@@ -16,13 +14,11 @@ import PainelIndicadoresSatisfacao from '../pages/monitor/PainelIndicadoresSatis
 import PainelAvaliacaoPosPrograma from '../pages/monitor/PainelAvaliacaoPosPrograma';
 import PainelGeralIndicadores from '../pages/monitor/PainelGeralIndicadores';
 
-type MetasTab = 'relatorio' | 'frequencia' | 'alcance' | 'eixo3' | 'eixo3pratica' | 'eixo4' | 'eixo4pratica' | 'formulario30dias' | 'painel30dias' | 'pesquisasSatisfacao' | 'avaliacaoPosPrograma' | 'painelSatisfacao' | 'painelPosPrograma' | 'painelGeral';
+type MetasTab = 'relatorio' | 'eixo3' | 'eixo3pratica' | 'eixo4' | 'eixo4pratica' | 'formulario30dias' | 'painel30dias' | 'pesquisasSatisfacao' | 'avaliacaoPosPrograma' | 'painelSatisfacao' | 'painelPosPrograma' | 'painelGeral';
 
 interface MonitoramentoAvaliacaoProps {
   isAdmin: boolean;
   canAccessRelatorio: boolean;
-  canAccessFrequencia: boolean;
-  canAccessAlcance: boolean;
   canAccessEixo3: boolean;
   canAccessEixo4: boolean;
   canAccessFormulario30Dias: boolean;
@@ -44,7 +40,7 @@ type MonitoringNavConfigEntry =
 
 // Fonte única de configuração da navegação: rótulo, permissão e
 // agrupamento vivem juntos aqui — nada disso é repetido em outro lugar.
-// As chaves (frequencia, alcance, eixo3...) continuam as mesmas de
+// As chaves (eixo3, eixo4...) continuam as mesmas de
 // sempre; só a apresentação passou a ser hierárquica, agora organizada
 // por tipo de interação (o que eu preencho × o que eu consulto), e não
 // mais por assunto.
@@ -62,8 +58,6 @@ const MONITORING_NAV: MonitoringNavConfigEntry[] = [
   {
     type: 'group', label: 'Painéis', items: [
       { key: 'painelGeral',  label: 'Painel Geral de Indicadores',      can: p => p.isAdmin || p.canAccessPainelGeralIndicadores },
-      { key: 'frequencia',   label: 'Eixo 1 — Inclusão',                can: p => p.isAdmin || p.canAccessFrequencia },
-      { key: 'alcance',      label: 'Eixo 2 — Alcance',                 can: p => p.isAdmin || p.canAccessAlcance },
       { key: 'eixo4',        label: 'Visita In Loco – Teórica',         can: p => p.isAdmin || p.canAccessEixo4 },
       { key: 'eixo4pratica', label: 'Visita In Loco – Prática',         can: p => p.isAdmin || p.canAccessEixo4 },
       { key: 'painel30dias', label: 'Verificação Inicial — 30 Dias',    can: p => p.isAdmin || p.canAccessPainel30Dias },
@@ -104,7 +98,7 @@ export const MonitoramentoAvaliacao: React.FC<MonitoramentoAvaliacaoProps> = (pr
     const first = TODAS_ABAS.find(t => t.can(props));
     if (first) setActiveTab(first.key);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.isAdmin, props.canAccessRelatorio, props.canAccessFrequencia, props.canAccessAlcance, props.canAccessEixo3, props.canAccessEixo4, props.canAccessFormulario30Dias, props.canAccessPainel30Dias, props.canAccessPesquisasSatisfacao, props.canAccessPainelSatisfacao, props.canAccessAvaliacaoPosPrograma, props.canAccessPainelPosPrograma, props.canAccessPainelGeralIndicadores]);
+  }, [props.isAdmin, props.canAccessRelatorio, props.canAccessEixo3, props.canAccessEixo4, props.canAccessFormulario30Dias, props.canAccessPainel30Dias, props.canAccessPesquisasSatisfacao, props.canAccessPainelSatisfacao, props.canAccessAvaliacaoPosPrograma, props.canAccessPainelPosPrograma, props.canAccessPainelGeralIndicadores]);
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -135,8 +129,6 @@ export const MonitoramentoAvaliacao: React.FC<MonitoramentoAvaliacaoProps> = (pr
             </div>
           )}
 
-          {activeTab === 'frequencia' && <Frequencia />}
-          {activeTab === 'alcance' && <Alcance />}
           {activeTab === 'eixo3' && <VisitaInLocoForm showToast={showToast} />}
           {activeTab === 'eixo3pratica' && <VisitaInLocoPraticaForm showToast={showToast} />}
           {activeTab === 'eixo4' && <VisitaInLocoDashboard />}

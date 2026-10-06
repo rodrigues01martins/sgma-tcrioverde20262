@@ -414,14 +414,8 @@ export function App() {
     return (
       <>
         <ApuracaoMensal
-          isAdmin={isAdmin}
-          canAccessUpload={canAccessUpload}
-          canAccessGerencial={canAccessGerencial}
-          canAccessRepasse={canAccessRepasse}
-          canAccessHistorico={canAccessHistorico}
           onGoHome={handleGoHome}
           onSignOut={handleSignOut}
-          showToast={showToast}
         />
         <Toast message={toast.message} isVisible={toast.isVisible} />
       </>
@@ -435,8 +429,6 @@ export function App() {
         <MonitoramentoAvaliacao
           isAdmin={isAdmin}
           canAccessRelatorio={canAccessRelatorio}
-          canAccessFrequencia={canAccessFrequencia}
-          canAccessAlcance={canAccessAlcance}
           canAccessEixo3={canAccessEixo3}
           canAccessEixo4={canAccessEixo4}
           canAccessFormulario30Dias={canAccessFormulario30Dias}

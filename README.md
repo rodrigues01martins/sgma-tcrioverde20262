@@ -8,13 +8,13 @@ Aplicativo de acompanhamento, gestão financeira e Monitoramento e Avaliação d
 - **Backend de dados**: Firebase Authentication (e-mail/senha) + Cloud Firestore
 - **Funções administrativas server-side**: Vercel Serverless Functions (`api/admin/*`) usando Firebase Admin SDK — criação e exclusão de usuários nunca passam pelo Client SDK, para não trocar a sessão do administrador logado
 - **Gráficos**: Chart.js (react-chartjs-2) e Recharts, conforme a tela
-- **Exportação**: ExcelJS (listas de detalhamento) e impressão nativa do navegador (relatórios e Painel Geral de Indicadores)
+- **Exportação**: impressão nativa do navegador (relatórios e Painel Geral de Indicadores)
 
 O app usa dois Design Systems lado a lado, por história de portabilidade: `src/components/ui/` (Tailwind, dimensões Financeiro/Gestão) e `src/components/monitor/ui/` (estilo inline com variáveis CSS, dimensões Apuração Mensal/Monitoramento e Avaliação).
 
 ## Dimensões e funcionalidades
 
-Após o login, o usuário escolhe uma dimensão (`DimensionSelect`). Acompanhamento Financeiro, Monitoramento e Avaliação e Apuração Mensal aparecem para qualquer usuário autenticado — dentro de cada uma, só ficam disponíveis as abas cuja permissão específica foi liberada (administradores têm acesso automático a todas). Gestão do Aplicativo só aparece para administradores.
+Após o login, o usuário escolhe uma dimensão (`DimensionSelect`). Acompanhamento Financeiro e Monitoramento e Avaliação aparecem para qualquer usuário autenticado — dentro de cada uma, só ficam disponíveis as abas cuja permissão específica foi liberada (administradores têm acesso automático a todas). Gestão do Aplicativo só aparece para administradores.
 
 ### Acompanhamento Financeiro
 
@@ -26,17 +26,12 @@ Após o login, o usuário escolhe uma dimensão (`DimensionSelect`). Acompanhame
 
 ### Apuração Mensal
 
-Upload mensal de dados de colaboradores (uma coleção por competência) e apuração derivada:
-
-- **Upload**: importação do CSV da competência, com classificação de vínculo (ativo/admitido/desligado no mês) e reconciliação obrigatória antes de salvar
-- **Gerencial**: headcount, contratos iniciados/finalizados, municípios e órgãos atendidos, jovens próximos de completar 18 anos, vale-transporte no mês
-- **Repasse**: valores apurados de custeio variável/fixo/itens não continuados e diferença em relação ao repasse mensal estimado
-- **Histórico**: competências já importadas, com exclusão administrativa
+A tela está vazia: o conteúdo anterior (abas Upload, Gerencial, Repasse e Histórico) foi removido, preservando a rota e o cabeçalho global. O atalho na seleção de dimensão também foi retirado. Os dados já gravados no Firestore não foram apagados.
 
 ### Monitoramento e Avaliação
 
 - **Formulários**: Visita In Loco (Teórica e Prática), Verificação Inicial — 30 Dias, Relatório Final de Execução do Objeto (assistente em seções, com dados fixos da parceria configurados pelo administrador), Indicadores de Satisfação (Aprendiz Ativo, Mentor da Prática, Responsável Legal — importação via CSV do Microsoft Forms) e Avaliação Pós-Programa (Egresso)
-- **Painéis**: Eixo 1 — Inclusão, Eixo 2 — Alcance, Visita In Loco (Teórica e Prática), Verificação Inicial — 30 Dias, Indicadores de Satisfação, Avaliação Pós-Programa
+- **Painéis**: Visita In Loco (Teórica e Prática), Verificação Inicial — 30 Dias, Indicadores de Satisfação, Avaliação Pós-Programa
 - **Painel Geral de Indicadores**: relatório técnico institucional com os 44 indicadores da matriz metodológica definitiva do Programa (capa, quadro consolidado, fichas técnicas por indicador, notas metodológicas e impressão/PDF), reaproveitando os mesmos motores de cálculo dos painéis individuais — nunca uma fórmula paralela
 - Siglas de indicadores (PVP, TRV, IRI, IQPF etc.) têm tooltip com o nome completo em toda a interface
 
