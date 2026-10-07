@@ -10,10 +10,8 @@
 // alteração aqui precisa continuar espelhada em firestore.rules (que é
 // declarativo e não pode importar TypeScript).
 //
-// Total real confirmado: 18 permissões individuais.
+// Total real confirmado: 14 permissões individuais.
 export type PermissionKey =
-  // Apuração Mensal
-  | 'canAccessUpload' | 'canAccessGerencial' | 'canAccessRepasse' | 'canAccessHistorico'
   // Monitoramento e Avaliação
   | 'canAccessEixo3' | 'canAccessFormulario30Dias' | 'canAccessRelatorio'
   | 'canAccessPesquisasSatisfacao' | 'canAccessAvaliacaoPosPrograma'
@@ -22,7 +20,7 @@ export type PermissionKey =
   // Acompanhamento Financeiro
   | 'canAccessEntry' | 'canAccessReport';
 
-export type AreaKey = 'Apuração Mensal' | 'Monitoramento e Avaliação' | 'Acompanhamento Financeiro';
+export type AreaKey = 'Monitoramento e Avaliação' | 'Acompanhamento Financeiro';
 
 export interface PermissionField {
   key: PermissionKey;
@@ -36,11 +34,6 @@ export interface PermissionField {
 // e Avaliação espelha a navegação real do módulo (Formulários ×
 // Painéis) — não cria perfil nem muda o significado de nenhuma chave.
 export const PERMISSION_FIELDS: PermissionField[] = [
-  { key: 'canAccessUpload',    label: 'Upload',    group: 'Apuração Mensal' },
-  { key: 'canAccessGerencial', label: 'Gerencial', group: 'Apuração Mensal' },
-  { key: 'canAccessRepasse',   label: 'Repasse',   group: 'Apuração Mensal' },
-  { key: 'canAccessHistorico', label: 'Histórico', group: 'Apuração Mensal' },
-
   { key: 'canAccessEixo3',                  label: 'Visita In Loco (Teórica e Prática)', group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
   { key: 'canAccessFormulario30Dias',       label: 'Verificação Inicial — 30 Dias',      group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
   { key: 'canAccessRelatorio',              label: 'Relatório Final',                    group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
@@ -59,14 +52,24 @@ export const PERMISSION_FIELDS: PermissionField[] = [
   { key: 'canAccessReport', label: 'Acompanhar Despesa e Painel Financeiro', group: 'Acompanhamento Financeiro' },
 ];
 
-export const AREA_ORDER: AreaKey[] = ['Apuração Mensal', 'Monitoramento e Avaliação', 'Acompanhamento Financeiro'];
+export const AREA_ORDER: AreaKey[] = ['Monitoramento e Avaliação', 'Acompanhamento Financeiro'];
 
 export const PERMISSION_KEYS: PermissionKey[] = PERMISSION_FIELDS.map(f => f.key);
+
+// Chaves da antiga Apuração Mensal (módulo removido). Fora do catálogo:
+// não aparecem, não contam e não são editáveis na Gestão de Usuários.
+// Continuam gravadas como `false` em usuário novo só porque
+// semPermissoesElevadas() em firestore.rules ainda as exige no
+// auto-cadastro do primeiro login — retirar daqui sem ajustar as regras
+// bloquearia esse cadastro.
+export const LEGACY_PERMISSION_KEYS = ['canAccessUpload', 'canAccessGerencial', 'canAccessRepasse', 'canAccessHistorico'] as const;
+export type LegacyPermissionKey = typeof LEGACY_PERMISSION_KEYS[number];
 
 // Todo usuário novo nasce com privilégio zero (seção 17) — usado tanto
 // pelo primeiro login (App.tsx) quanto pela criação administrativa
 // (api/admin/create-user), para as duas rotas nunca divergirem.
-export const DEFAULT_PERMISSIONS: Record<PermissionKey, false> = PERMISSION_KEYS.reduce((acc, key) => {
-  acc[key] = false;
-  return acc;
-}, {} as Record<PermissionKey, false>);
+export const DEFAULT_PERMISSIONS: Record<PermissionKey | LegacyPermissionKey, false> =
+  [...PERMISSION_KEYS, ...LEGACY_PERMISSION_KEYS].reduce((acc, key) => {
+    acc[key] = false;
+    return acc;
+  }, {} as Record<PermissionKey | LegacyPermissionKey, false>);

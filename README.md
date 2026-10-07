@@ -43,11 +43,10 @@ A tela está vazia: o conteúdo anterior (abas Upload, Gerencial, Repasse e Hist
 ## Papéis e permissões
 
 - **Administrador**: `role: "admin"` no documento `/users/{uid}` do Firestore, com acesso automático a todas as funcionalidades. Um e-mail de bootstrap (`BOOTSTRAP_ADMIN_EMAIL`, definido em `src/firebase.ts`, replicado em `firestore.rules` e nas variáveis de ambiente do servidor) garante acesso de administrador antes de qualquer papel ser atribuído — essa conta nunca pode ser excluída pelo app, e o último administrador operacional também é protegido contra autoexclusão em cascata.
-- **Usuário comum**: acesso liberado individualmente pelo administrador, permissão por permissão. A fonte única das 18 permissões é `src/config/permissions.ts` (espelhada em `firestore.rules`):
+- **Usuário comum**: acesso liberado individualmente pelo administrador, permissão por permissão. A fonte única das 14 permissões é `src/config/permissions.ts` (espelhada em `firestore.rules`):
 
   | Área | Permissões |
   |---|---|
-  | Apuração Mensal | Upload, Gerencial, Repasse, Histórico |
   | Monitoramento e Avaliação — Formulários | Visita In Loco, Verificação Inicial — 30 Dias, Relatório Final, Indicadores de Satisfação, Avaliação Pós-Programa |
   | Monitoramento e Avaliação — Painéis | Painel Geral de Indicadores, Eixo 1 — Inclusão, Eixo 2 — Alcance, Visita In Loco, Verificação Inicial — 30 Dias, Indicadores de Satisfação, Avaliação Pós-Programa |
   | Acompanhamento Financeiro | Novo Lançamento, Acompanhar Despesa e Painel Financeiro |

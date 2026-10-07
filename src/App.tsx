@@ -45,11 +45,6 @@ export function App() {
   const [canAccessRelatorio, setCanAccessRelatorio] = useState(false);
   const [canAccessEntry, setCanAccessEntry] = useState(false);
   const [canAccessReport, setCanAccessReport] = useState(false);
-  // Dimensão "Apuração Mensal" (Monitor de Aprendizes — Módulo 1)
-  const [canAccessUpload, setCanAccessUpload] = useState(false);
-  const [canAccessGerencial, setCanAccessGerencial] = useState(false);
-  const [canAccessRepasse, setCanAccessRepasse] = useState(false);
-  const [canAccessHistorico, setCanAccessHistorico] = useState(false);
   // Dimensão "Monitoramento e Avaliação" (Monitor de Aprendizes — Módulo 2)
   const [canAccessFrequencia, setCanAccessFrequencia] = useState(false);
   const [canAccessAlcance, setCanAccessAlcance] = useState(false);
@@ -70,10 +65,6 @@ export function App() {
       setCanAccessRelatorio(false);
       setCanAccessEntry(false);
       setCanAccessReport(false);
-      setCanAccessUpload(false);
-      setCanAccessGerencial(false);
-      setCanAccessRepasse(false);
-      setCanAccessHistorico(false);
       setCanAccessFrequencia(false);
       setCanAccessAlcance(false);
       setCanAccessEixo3(false);
@@ -96,10 +87,6 @@ export function App() {
       setCanAccessRelatorio(admin || data?.canAccessRelatorio === true);
       setCanAccessEntry(admin || data?.canAccessEntry === true);
       setCanAccessReport(admin || data?.canAccessReport === true);
-      setCanAccessUpload(admin || data?.canAccessUpload === true);
-      setCanAccessGerencial(admin || data?.canAccessGerencial === true);
-      setCanAccessRepasse(admin || data?.canAccessRepasse === true);
-      setCanAccessHistorico(admin || data?.canAccessHistorico === true);
       setCanAccessFrequencia(admin || data?.canAccessFrequencia === true);
       setCanAccessAlcance(admin || data?.canAccessAlcance === true);
       setCanAccessEixo3(admin || data?.canAccessEixo3 === true);
@@ -116,10 +103,6 @@ export function App() {
       setCanAccessRelatorio(bootstrapAdmin);
       setCanAccessEntry(bootstrapAdmin);
       setCanAccessReport(bootstrapAdmin);
-      setCanAccessUpload(bootstrapAdmin);
-      setCanAccessGerencial(bootstrapAdmin);
-      setCanAccessRepasse(bootstrapAdmin);
-      setCanAccessHistorico(bootstrapAdmin);
       setCanAccessFrequencia(bootstrapAdmin);
       setCanAccessAlcance(bootstrapAdmin);
       setCanAccessEixo3(bootstrapAdmin);
