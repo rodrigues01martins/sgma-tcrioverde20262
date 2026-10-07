@@ -31,3 +31,28 @@ O resultado fica em `./backups/japrendiz-<timestamp>/` (pasta ignorada pelo
 git — contém dados pessoais de aprendizes, nunca deve ser versionada).
 Copie essa pasta para um local seguro fora do repositório antes de seguir
 para a Fase 1 (importação no projeto `ptrenapsi`).
+
+## `limpar-visitas-in-loco-antigas.mjs` — exclusão da Visita In Loco Teórica/Prática
+
+Apaga os registros históricos dos dois instrumentos substituídos pela Visita
+In Loco única. Critério determinístico: apaga **somente** as coleções
+`visitas_inloco` (Teórica) e `visitas_inloco_pratica` (Prática), inteiras,
+por nome exato. A coleção nova `visitas_inloco_caser` e todas as demais não
+são tocadas. Recusa rodar se a chave não for do projeto `sgma-tcrioverde20262`.
+
+1. Gere a chave da conta de serviço do projeto `sgma-tcrioverde20262` e salve
+   como `./sgma-serviceAccountKey.json` (ignorado pelo git).
+2. Contagem (não apaga nada):
+   ```bash
+   GOOGLE_APPLICATION_CREDENTIALS=./sgma-serviceAccountKey.json \
+     node scripts/limpar-visitas-in-loco-antigas.mjs
+   ```
+3. Exclusão (gera backup JSON em `./backups/` antes):
+   ```bash
+   GOOGLE_APPLICATION_CREDENTIALS=./sgma-serviceAccountKey.json \
+     node scripts/limpar-visitas-in-loco-antigas.mjs --executar
+   ```
+
+Alternativa sem script: Firebase Console → Firestore Database → coleção
+`visitas_inloco` → ⋮ → **Excluir coleção** (repetir para
+`visitas_inloco_pratica`).

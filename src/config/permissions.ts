@@ -34,7 +34,7 @@ export interface PermissionField {
 // e Avaliação espelha a navegação real do módulo (Formulários ×
 // Painéis) — não cria perfil nem muda o significado de nenhuma chave.
 export const PERMISSION_FIELDS: PermissionField[] = [
-  { key: 'canAccessEixo3',                  label: 'Visita In Loco (Teórica e Prática)', group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
+  { key: 'canAccessEixo3',                  label: 'Visita In Loco (vistoriador)',       group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
   { key: 'canAccessFormulario30Dias',       label: 'Verificação Inicial — 30 Dias',      group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
   { key: 'canAccessRelatorio',              label: 'Relatório Final',                    group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
   { key: 'canAccessPesquisasSatisfacao',    label: 'Indicadores de Satisfação',          group: 'Monitoramento e Avaliação', subgroup: 'Formulários' },
@@ -43,7 +43,7 @@ export const PERMISSION_FIELDS: PermissionField[] = [
   { key: 'canAccessPainelGeralIndicadores', label: 'Painel Geral de Indicadores', group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
   { key: 'canAccessFrequencia',    label: 'Eixo 1 — Inclusão',                  group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
   { key: 'canAccessAlcance',       label: 'Eixo 2 — Alcance',                   group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
-  { key: 'canAccessEixo4',         label: 'Visita In Loco (Teórica e Prática)', group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
+  { key: 'canAccessEixo4',         label: 'Visita In Loco (consulta)',          group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
   { key: 'canAccessPainel30Dias',  label: 'Verificação Inicial — 30 Dias',      group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
   { key: 'canAccessPainelSatisfacao',  label: 'Indicadores de Satisfação',      group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },
   { key: 'canAccessPainelPosPrograma', label: 'Avaliação Pós-Programa',         group: 'Monitoramento e Avaliação', subgroup: 'Painéis' },

@@ -105,9 +105,8 @@ export default function PainelGeralIndicadores() {
           Avaliação Pós-Programa (Egresso), Análises Transversais, Execução do Programa e Verificação Inicial — 30 Dias.
           Os resultados são calculados a partir dos mesmos dados e motores de cálculo já utilizados pelos painéis
           individuais de Monitoramento e Avaliação — nenhuma fórmula foi recalculada de forma independente para este
-          documento. Os painéis de Visita In Loco (Teórica e Prática) permanecem disponíveis separadamente e são
-          apresentados aqui apenas como informação complementar de fiscalização (seção 5), pois não integram os 44
-          registros da matriz oficial.
+          documento. A Visita In Loco permanece disponível separadamente em Monitoramento e Avaliação, pois não
+          integra os 44 registros da matriz oficial.
         </p>
       </section>
 
@@ -261,7 +260,7 @@ export default function PainelGeralIndicadores() {
           <li>PVP e TRV: capacidade permanente de 5.000 vagas. PVP mede a ocupação no fechamento da competência (não a soma de todos os participantes do mês). TRV considera as vagas ociosas na abertura do mês somadas aos desligamentos efetivos ocorridos na competência; quando não há nenhuma oportunidade de preenchimento (denominador zero), o resultado é apresentado como Não aplicável, nunca como zero.</li>
           <li>Referência temporal: Pesquisas de Satisfação e Análises Transversais são semestrais; Avaliação Pós-Programa (Egresso) é anual; Execução do Programa e Verificação Inicial — 30 Dias são mensais. As Análises Transversais que comparam resultados de Egresso (ATDS, ATIF, ATER) combinam uma fonte anual com fontes semestrais — este relatório identifica essa diferença de janela em vez de tratá-las como contemporâneas.</li>
           <li>Verificação Inicial — 30 Dias: a apuração considera somente formulários efetivamente concluídos; rascunhos não são contabilizados.</li>
-          <li>Visita In Loco (Teórica e Prática): não constam como registros autônomos na matriz de 44 indicadores recebida — os painéis específicos continuam disponíveis separadamente em Monitoramento e Avaliação → Painéis.</li>
+          <li>Visita In Loco: não consta como registro autônomo na matriz de 44 indicadores recebida — o instrumento continua disponível separadamente em Monitoramento e Avaliação.</li>
         </ul>
       </section>
 

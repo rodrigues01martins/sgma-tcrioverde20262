@@ -211,43 +211,42 @@ service cloud.firestore {
     }
 
     // ── Monitor de Aprendizes — dimensão "Monitoramento e Avaliação" ───
-    // Visitas de fiscalização in loco (Formulário + Painel Visita In Loco).
-    // O autosave do Formulário de Visita In Loco atualiza o próprio
-    // rascunho repetidas vezes antes do envio — por isso o autor pode
-    // dar update enquanto status ainda for 'rascunho' (nunca depois de
-    // 'enviada'), sem poder trocar de dono do documento.
-    match /visitas_inloco/{visitaId} {
-      allow read: if isAuthenticated();
-      allow create: if isAdmin() || hasPermission('canAccessEixo3');
-      allow update: if isAdmin() || (
-        hasPermission('canAccessEixo3') &&
+    // Visita In Loco (instrumento único — Termo de Colaboração nº 02/2026).
+    // O ID do documento é a data da visita (AAAA-MM-DD): o Firestore só
+    // permite um documento por ID, então existe no máximo uma visita por
+    // data. Só o vistoriador autor altera o próprio rascunho (autosave);
+    // data, vistoriador, identificação e criação são imutáveis; depois de
+    // 'finalizada' nenhuma alteração é aceita (nem por admin — admin só
+    // pode excluir, para correção manual). Leitura restrita a quem tem
+    // acesso ao formulário (canAccessEixo3) ou ao painel (canAccessEixo4).
+    match /visitas_inloco_caser/{dataVisita} {
+      function podeVistoriar() {
+        return isAdmin() || hasPermission('canAccessEixo3');
+      }
+      allow read: if isAdmin() || hasPermission('canAccessEixo3') || hasPermission('canAccessEixo4');
+      allow create: if podeVistoriar() &&
+        dataVisita.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}') &&
+        request.resource.data.status == 'rascunho' &&
+        request.resource.data.visita.data == dataVisita &&
+        request.resource.data.vistoriador.uid == request.auth.uid;
+      allow update: if podeVistoriar() &&
         resource.data.status == 'rascunho' &&
-        resource.data.criadoPorUid == request.auth.uid &&
-        request.resource.data.criadoPorUid == resource.data.criadoPorUid
-      );
-      allow delete: if isAdmin();
-    }
-
-    // Visita In Loco – Prática. Instrumento independente da Visita In Loco
-    // acima (agora Teórica) — coleção própria, mesmo modelo de permissão
-    // (quem já tem acesso à família Visita In Loco acessa as duas
-    // modalidades), para não misturar registros nem criar novo perfil.
-    match /visitas_inloco_pratica/{visitaId} {
-      allow read: if isAuthenticated();
-      allow create: if isAdmin() || hasPermission('canAccessEixo3');
-      allow update: if isAdmin() || (
-        hasPermission('canAccessEixo3') &&
-        resource.data.status == 'rascunho' &&
-        resource.data.criadoPorUid == request.auth.uid &&
-        request.resource.data.criadoPorUid == resource.data.criadoPorUid
-      );
+        resource.data.vistoriador.uid == request.auth.uid &&
+        request.resource.data.vistoriador == resource.data.vistoriador &&
+        request.resource.data.identificacao == resource.data.identificacao &&
+        request.resource.data.criadoEm == resource.data.criadoEm &&
+        request.resource.data.visita.data == dataVisita &&
+        (request.resource.data.status == 'rascunho' || (
+          request.resource.data.status == 'finalizada' &&
+          request.resource.data.keys().hasAll(['apuracao', 'finalizadoEm'])
+        ));
       allow delete: if isAdmin();
     }
 
     // Verificação Inicial do Aprendiz — 30 Dias. Uma coleção por período de
     // aplicação (verificacao30dias_aaaa_mm), mesmo motivo do curinga usado
     // acima para colaboradores_*. Mesmo raciocínio do autosave de
-    // visitas_inloco: o autor pode atualizar o próprio rascunho
+    // visitas_inloco_caser: o autor pode atualizar o próprio rascunho
     // enquanto status == 'rascunho'.
     match /{collectionId}/{respostaId} {
       allow read: if collectionId.matches('verificacao30dias_[0-9]+_[0-9]+') && isAuthenticated();
@@ -293,7 +292,7 @@ service cloud.firestore {
         request.resource.data.surveyType == resource.data.surveyType;
       // O fluxo de importação nunca exclui (seção 13/30) — delete
       // permanece só para admin, mesmo padrão de correção manual já
-      // usado em todas as demais coleções desta dimensão (visitas_inloco,
+      // usado em todas as demais coleções desta dimensão (visitas_inloco_caser,
       // colaboradores_*, verificacao30dias_*), mesmo sem botão de
       // excluir na tela.
       allow delete: if isAdmin();

@@ -10,9 +10,7 @@ import { INDICATOR_CATALOG } from './catalog'
 // Indicadores COMPLEMENTARES (fora dos 44 registros oficiais) cuja
 // denominação metodológica já está documentada e visível no próprio
 // aplicativo — nunca inventada. Siglas complementares SEM essa
-// confirmação (ex.: ICL e ISLA da Visita In Loco, que só aparecem como
-// abreviação em rótulos/cabeçalhos de tabela, sem nenhuma expansão
-// registrada no código-fonte) ficam de fora deliberadamente.
+// confirmação ficam de fora deliberadamente.
 const NOMES_COMPLEMENTARES = {
   TLA: 'Taxa de Locais Aptos',
 }

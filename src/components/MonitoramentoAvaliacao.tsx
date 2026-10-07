@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { MonitoringNavigation, NavEntry } from './MonitoringNavigation';
 import RelatorioFinal from './RelatorioFinal';
-import VisitaInLocoForm from '../pages/monitor/VisitaInLocoForm';
-import VisitaInLocoDashboard from '../pages/monitor/VisitaInLocoDashboard';
-import VisitaInLocoPraticaForm from '../pages/monitor/VisitaInLocoPraticaForm';
-import VisitaInLocoPraticaDashboard from '../pages/monitor/VisitaInLocoPraticaDashboard';
+import VisitaInLoco from '../pages/monitor/VisitaInLoco';
 import Formulario30DiasForm from '../pages/monitor/Formulario30DiasForm';
 import Painel30Dias from '../pages/monitor/Painel30Dias';
 import PesquisasSatisfacaoImport from '../pages/monitor/PesquisasSatisfacaoImport';
@@ -14,7 +11,7 @@ import PainelIndicadoresSatisfacao from '../pages/monitor/PainelIndicadoresSatis
 import PainelAvaliacaoPosPrograma from '../pages/monitor/PainelAvaliacaoPosPrograma';
 import PainelGeralIndicadores from '../pages/monitor/PainelGeralIndicadores';
 
-type MetasTab = 'relatorio' | 'eixo3' | 'eixo3pratica' | 'eixo4' | 'eixo4pratica' | 'formulario30dias' | 'painel30dias' | 'pesquisasSatisfacao' | 'avaliacaoPosPrograma' | 'painelSatisfacao' | 'painelPosPrograma' | 'painelGeral';
+type MetasTab = 'relatorio' | 'eixo3' | 'eixo4' | 'formulario30dias' | 'painel30dias' | 'pesquisasSatisfacao' | 'avaliacaoPosPrograma' | 'painelSatisfacao' | 'painelPosPrograma' | 'painelGeral';
 
 interface MonitoramentoAvaliacaoProps {
   isAdmin: boolean;
@@ -47,8 +44,7 @@ type MonitoringNavConfigEntry =
 const MONITORING_NAV: MonitoringNavConfigEntry[] = [
   {
     type: 'group', label: 'Formulários', items: [
-      { key: 'eixo3',             label: 'Visita In Loco – Teórica',        can: p => p.isAdmin || p.canAccessEixo3 },
-      { key: 'eixo3pratica',      label: 'Visita In Loco – Prática',        can: p => p.isAdmin || p.canAccessEixo3 },
+      { key: 'eixo3',             label: 'Visita In Loco',                  can: p => p.isAdmin || p.canAccessEixo3 },
       { key: 'formulario30dias',  label: 'Verificação Inicial — 30 Dias',   can: p => p.isAdmin || p.canAccessFormulario30Dias },
       { key: 'relatorio',         label: 'Relatório Final',                 can: p => p.isAdmin || p.canAccessRelatorio },
       { key: 'pesquisasSatisfacao',   label: 'Indicadores de Satisfação',   can: p => p.isAdmin || p.canAccessPesquisasSatisfacao },
@@ -58,8 +54,7 @@ const MONITORING_NAV: MonitoringNavConfigEntry[] = [
   {
     type: 'group', label: 'Painéis', items: [
       { key: 'painelGeral',  label: 'Painel Geral de Indicadores',      can: p => p.isAdmin || p.canAccessPainelGeralIndicadores },
-      { key: 'eixo4',        label: 'Visita In Loco – Teórica',         can: p => p.isAdmin || p.canAccessEixo4 },
-      { key: 'eixo4pratica', label: 'Visita In Loco – Prática',         can: p => p.isAdmin || p.canAccessEixo4 },
+      { key: 'eixo4',        label: 'Visita In Loco',                   can: p => p.isAdmin || p.canAccessEixo4 },
       { key: 'painel30dias', label: 'Verificação Inicial — 30 Dias',    can: p => p.isAdmin || p.canAccessPainel30Dias },
       { key: 'painelSatisfacao',    label: 'Indicadores de Satisfação', can: p => p.isAdmin || p.canAccessPainelSatisfacao },
       { key: 'painelPosPrograma',   label: 'Avaliação Pós-Programa',    can: p => p.isAdmin || p.canAccessPainelPosPrograma },
@@ -129,10 +124,8 @@ export const MonitoramentoAvaliacao: React.FC<MonitoramentoAvaliacaoProps> = (pr
             </div>
           )}
 
-          {activeTab === 'eixo3' && <VisitaInLocoForm showToast={showToast} />}
-          {activeTab === 'eixo3pratica' && <VisitaInLocoPraticaForm showToast={showToast} />}
-          {activeTab === 'eixo4' && <VisitaInLocoDashboard />}
-          {activeTab === 'eixo4pratica' && <VisitaInLocoPraticaDashboard />}
+          {activeTab === 'eixo3' && <VisitaInLoco podeEditar showToast={showToast} />}
+          {activeTab === 'eixo4' && <VisitaInLoco showToast={showToast} />}
           {activeTab === 'formulario30dias' && <Formulario30DiasForm showToast={showToast} />}
           {activeTab === 'painel30dias' && <Painel30Dias />}
           {activeTab === 'relatorio' && <RelatorioFinal isAdmin={isAdmin} showToast={showToast} />}
