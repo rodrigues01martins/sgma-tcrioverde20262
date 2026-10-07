@@ -10,7 +10,7 @@
 
 ## 1. Contexto do produto
 
-- **App:** SMA — Aprendiz (título da aba: `SMA - APRENDIZ`), idioma `pt-BR`.
+- **App:** SMA — Aprendiz (título da aba: `SMA-TC-RIOVERDE`), idioma `pt-BR`.
 - **Órgão:** Secretaria de Estado de Desenvolvimento Social de Goiás (SEDS/GO).
 - **Público:** equipe técnica/gestora (desktop-first, mas responsivo).
 - **4 dimensões** escolhidas após o login (`DimensionSelect`):
